@@ -57,8 +57,12 @@ endif()
 if( CINDER_BUILD_TESTS )
 	enable_testing()
 	# Set output directory so tests are in a predictable location within the build tree
-	if( ( "${CMAKE_GENERATOR}" MATCHES "Visual Studio.+" ) OR ( "Xcode" STREQUAL "${CMAKE_GENERATOR}" ) )
-		set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" )
+    #
+    # If the variable `CMAKE_CONFIGURATION_TYPES` is enabled the generator is "multi-config"
+    # A multi-config generator is able to build any configuration with a single `cmake` configuration.
+    # For example Visual Studio, XCode and "Ninja Multi-Config".
+    if( CMAKE_CONFIGURATION_TYPES )
+        set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>" )
 	else()
 		set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}" )
 	endif()
