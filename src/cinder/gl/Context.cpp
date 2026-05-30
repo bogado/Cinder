@@ -2269,6 +2269,8 @@ GlslProgRef& Context::getStockShader( const ShaderDef &shaderDef )
 	#elif defined( CINDER_LINUX )
 			std::cout << "getStockShader error: " << e.what() << std::endl;
 	#endif
+            // This function should not return "nothing" so we terminate.
+            std::terminate();
 		}
 #else
 		auto result = gl::env()->buildShader( shaderDef );
