@@ -43,7 +43,12 @@ ci_make_app(
 )
 
 # Unit tests need to be a console app (not WIN32 GUI app) for output
-set_target_properties( UnitTests PROPERTIES WIN32_EXECUTABLE FALSE )
+set_target_properties(UnitTests 
+    PROPERTIES
+        WIN32_EXECUTABLE FALSE
+        # Set output directory so tests are in a predictable location within the build tree
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>"
+)
 
 add_test(
 	NAME UnitTests
