@@ -23,10 +23,12 @@
 
 #pragma once
 
-#if defined( CINDER_SHARED_BUILD )
-	#define CI_API __declspec(dllexport)
-#elif defined( CINDER_SHARED )
-	#define CI_API __declspec(dllimport)
+#if defined( CINDER_MSW )
+	#if defined( CINDER_SHARED_BUILD )
+		#define CI_API __declspec(dllexport)
+	#else defined( CINDER_SHARED )
+		#define CI_API __declspec(dllimport)
+	#endif
 #else
 	#define CI_API
 #endif

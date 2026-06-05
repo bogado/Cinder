@@ -325,7 +325,7 @@ FT_BEGIN_HEADER
   /*   Do not #undef these macros here since the build system might define */
   /*   them for certain configurations only.                               */
   /*                                                                       */
-#if defined( CINDER_SHARED_BUILD )
+#if defined( CINDER_SHARED_BUILD ) && defined( CINDER_MSW )
 #define FT_EXPORT(x)      __declspec(dllexport) x
 #define FT_EXPORT_DEF(x)  __declspec(dllexport) x
 #endif
