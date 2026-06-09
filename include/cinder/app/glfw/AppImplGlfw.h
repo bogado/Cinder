@@ -32,6 +32,10 @@
 
 namespace cinder { namespace app {
 
+namespace linux {
+    class GlfwCallbacks;
+}
+
 class AppGlfw;
 class WindowImplGlfw;
 
@@ -95,8 +99,11 @@ private:
 	void						forceDraw( app::WindowRef window );
 	
 	friend class AppGlfw;
+    friend class AppImplLinux;
 	friend class WindowImplGlfw;
+    friend class WindowImplLinux;
 	friend class GlfwCallbacks;
+	friend class linux::GlfwCallbacks;
 };
 
 }} // namespace cinder::app

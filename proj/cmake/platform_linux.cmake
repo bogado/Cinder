@@ -64,6 +64,8 @@ if( NOT CINDER_HEADLESS ) # Desktop ogl, es2, es3, RPi with GLFW
 
 	# Add GLFW app implementation (from new glfw/ directory)
 	list( APPEND SRC_SET_CINDER_APP_LINUX
+        ${CINDER_SRC_DIR}/cinder/app/linux/AppImplLinuxGlfw.cpp
+		${CINDER_SRC_DIR}/cinder/app/linux/WindowImplLinuxGlfw.cpp
 		${CINDER_SRC_DIR}/cinder/app/glfw/AppGlfw.cpp
 		${CINDER_SRC_DIR}/cinder/app/glfw/AppImplGlfw.cpp
 		${CINDER_SRC_DIR}/cinder/app/glfw/RendererGlGlfw.cpp

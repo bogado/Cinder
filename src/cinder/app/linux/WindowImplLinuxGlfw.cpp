@@ -25,10 +25,11 @@
 #include "cinder/app/linux/WindowImplLinux.h"
 #include "cinder/app/linux/AppImplLinux.h"
 #include "cinder/app/linux/PlatformLinux.h"
+#include <cinder/app/glfw/WindowImplGlfw.h>
 namespace cinder { namespace app {
 
-WindowImplLinux::WindowImplLinux( const Window::Format &format, WindowImplLinux *sharedRendererWindow, AppImplLinux *appImpl )
-	: mAppImpl( appImpl )
+WindowImplLinux::WindowImplLinux( const Window::Format &format, WindowImplGlfw *sharedRendererWindow, AppImplLinux *appImpl )
+	: WindowImplGlfw(format, sharedRendererWindow, appImpl)
 {
 	mFullScreen = format.isFullScreen();
 	mDisplay = format.getDisplay();

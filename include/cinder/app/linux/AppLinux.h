@@ -24,76 +24,20 @@
 #pragma once
 
 #include "cinder/app/AppBase.h"
+#include "cinder/app/glfw/AppGlfw.h"
 
 namespace cinder { namespace app {
 
 class AppImplLinux;
 
-class AppLinux : public AppBase {
- public:
-	typedef std::function<void ( Settings *settings )>	SettingsFn;
-
-	AppLinux();
-	virtual ~AppLinux();
-
-	WindowRef	createWindow( const Window::Format &format = Window::Format() ) override;
-	void		quit() override;
-
-	float		getFrameRate() const override;
-	void		setFrameRate( float frameRate ) override;
-	void		disableFrameRate() override;
-	bool		isFrameRateEnabled() const override;
-
-	WindowRef	getWindow() const override;
-	WindowRef	getWindowIndex( size_t index ) const override;
-	size_t		getNumWindows() const override;
-
-	WindowRef	getForegroundWindow() const override;
-
-	void		hideCursor() override;
-	void		showCursor() override;
-	ivec2		getMousePos() const override;
-
-	//! \cond
-	// Called during application instantiation via CINDER_APP_LINUX macro
-	template<typename AppT>
-	static void main( const RendererRef &defaultRenderer, const char *title, const SettingsFn &settingsFn = SettingsFn() );
-	//! \endcond
-
-  protected:
-	void	        launch() override;
-
-  private:
-	AppImplLinux*	mImpl = nullptr;
-};
-
-template<typename AppT>
-void AppLinux::main( const RendererRef &defaultRenderer, const char *title, const SettingsFn &settingsFn )
-{
-	AppBase::prepareLaunch();
-
-	Settings settings;
-	AppBase::initialize( &settings, defaultRenderer, title );
-
-	if( settingsFn )
-		settingsFn( &settings );
-
-	if( settings.getShouldQuit() )
-		return;
-
-	AppLinux *app = static_cast<AppLinux *>( new AppT );
-	app->executeLaunch();
-	delete app;
-
-	AppBase::cleanupLaunch();
-}
+using AppLinux  = AppGlfw; ;
 
 #define CINDER_APP_LINUX( APP, RENDERER, ... )									    \
 int main( int argc, char* argv[] )											        \
 {	\
 	cinder::app::Platform::get()->setCommandLineArgs( argc, argv );	\
 	cinder::app::RendererRef renderer( new RENDERER );								\
-	cinder::app::AppLinux::main<APP>( renderer, #APP, ##__VA_ARGS__ );	\
+	cinder::app::AppGlfw::main<APP>( renderer, #APP, ##__VA_ARGS__ );	\
 	return 0;																		\
 }
 

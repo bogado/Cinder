@@ -521,6 +521,7 @@ private:
 #if defined( CINDER_GLFW )
 	friend class AppImplGlfw;
 	friend class WindowImplGlfw;
+    friend class WindowImplLinux;
 	WindowImplGlfw      *getImpl() { return mImpl; }
 	void				 setIsResizing( bool resizing ) { mIsResizing = resizing; }
 #elif defined( CINDER_MSW_DESKTOP )

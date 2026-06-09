@@ -473,11 +473,7 @@ void AppImplGlfw::sleepUntilNextFrame()
 	if( ( mFrameRateEnabled ) && ( mNextFrameTime > currentSeconds ) ) {
 		double sleepTime = std::max( mNextFrameTime - currentSeconds, 0.0 );
 		unsigned long sleepMicroSecs = sleepTime*1000000L;
-#if defined( CINDER_LINUX )
-		usleep(sleepMicroSecs);
-#elif defined( CINDER_MAC )
 		std::this_thread::sleep_for( std::chrono::microseconds( sleepMicroSecs ) );
-#endif
 	}
 }
 

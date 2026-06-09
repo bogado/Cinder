@@ -24,8 +24,10 @@
 #pragma once
 
 #include "cinder/app/linux/AppLinux.h"
+#include "cinder/app/glfw/WindowImplGlfw.h"
 #include "cinder/app/Window.h"
 #include "cinder/Display.h"
+#include <cinder/app/glfw/AppImplGlfw.h>
 
 #if defined( CINDER_LINUX_EGL_ONLY )
 	#include "EGL/eglplatform.h"
@@ -39,34 +41,34 @@ namespace cinder { namespace app {
 
 class AppImplLinux;
 
-class WindowImplLinux {
+class WindowImplLinux : public WindowImplGlfw {
 public:
 
-	WindowImplLinux( const Window::Format &format, WindowImplLinux *sharedRendererWindow, AppImplLinux *appImpl );
+	WindowImplLinux( const Window::Format &format, WindowImplGlfw *sharedRendererWindow, AppImplLinux *appImpl );
 	virtual ~WindowImplLinux();
 
-	virtual bool		isFullScreen() { return mFullScreen; }
-	virtual void		setFullScreen( bool fullScreen, const app::FullScreenOptions &options );
-	virtual ivec2		getSize() const;
-	virtual void		setSize( const ivec2 &size );
-	virtual ivec2		getPos() const;
-	virtual void		setPos( const ivec2 &pos );
-	virtual void		close();
-	virtual std::string	getTitle() const { return mTitle; }
-	virtual void		setTitle( const std::string &title );
-	virtual void		hide();
-	virtual void		show();
-	virtual bool		isHidden() const { return false; }
-	virtual DisplayRef	getDisplay() const { return mDisplay; }
-	virtual RendererRef	getRenderer() const { return mRenderer; }
-	virtual const std::vector<TouchEvent::Touch>&	getActiveTouches() const;
+	bool		isFullScreen() override { return mFullScreen; }
+	void		setFullScreen( bool fullScreen, const app::FullScreenOptions &options ) override;
+	ivec2		getSize() const override;
+	void		setSize( const ivec2 &size ) override;
+	ivec2		getPos() const override;
+	void		setPos( const ivec2 &pos ) override;
+	void		close() override;
+	std::string	getTitle() const override { return mTitle; }
+	void		setTitle( const std::string &title ) override;
+	void		hide() override;
+	void		show() override;
+	bool		isHidden() const override { return false; }
+	DisplayRef	getDisplay() const override { return mDisplay; }
+	RendererRef	getRenderer() const override { return mRenderer; }
+	const std::vector<TouchEvent::Touch>&	getActiveTouches() const override;
 
 #if defined( CINDER_HEADLESS )
-	virtual void*	getNative();
-	virtual void*	getNative() const;
+	void*	getNative() override;
+	void*	getNative() const override;
 #else
-	virtual GLFWwindow	*getNative() { return mGlfwWindow; }
-	virtual GLFWwindow	*getNative() const { return mGlfwWindow; }
+	GLFWwindow	*getNative() override { return mGlfwWindow; }
+	GLFWwindow	*getNative() const override { return mGlfwWindow; }
 #endif
 
 	bool				isBorderless() const { return mBorderless; }
@@ -74,12 +76,12 @@ public:
 	bool				isAlwaysOnTop() const { return mAlwayOnTop; }
 	void				setAlwaysOnTop( bool alwaysOnTop );
 
-	AppImplLinux*		getAppImpl() { return mAppImpl; }
+	AppImplGlfw*		getAppImpl() { return mAppImpl; }
 	WindowRef			getWindow() { return mWindowRef; }
 
-	virtual void		keyDown( const KeyEvent &event );
-	virtual void		draw();
-	virtual void		resize();
+	void		keyDown( const KeyEvent &event ) override;
+	void		draw() override;
+	void		resize() override;
 
 
 	void				hideCursor();
@@ -87,7 +89,6 @@ public:
 	ivec2				getMousePos() const;
 
 protected:
-	AppImplLinux		*mAppImpl = nullptr;
 	WindowRef			mWindowRef;
 	GLFWwindow			*mGlfwWindow = nullptr;
 
@@ -105,6 +106,7 @@ protected:
 	std::vector<TouchEvent::Touch>	mActiveTouches;
 
 	friend class AppImplLinux;
+    friend class linux::GlfwCallbacks;
 };
 
 }} // namespace cinder::app

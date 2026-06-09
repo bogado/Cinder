@@ -24,6 +24,8 @@
 #pragma once
 
 #include "cinder/app/linux/AppLinux.h"
+#include "cinder/app/glfw/AppImplGlfw.h"
+
 #if defined( CINDER_LINUX_EGL_ONLY )
 	#include "EGL/egl.h"
 #else
@@ -31,71 +33,37 @@
 	#include "glfw/glfw3.h"
 #endif
 
+
 #include <list>
 
 namespace cinder { namespace app {
 
-class AppLinux;
 class WindowImplLinux;
 
-class AppImplLinux {
+class AppImplLinux : public AppImplGlfw {
  public:
 
 	AppImplLinux( AppLinux *aApp, const AppLinux::Settings &settings );
-	virtual ~AppImplLinux();
+	~AppImplLinux() override;
 
 	AppLinux					*getApp();
 
  protected:
-	WindowImplLinux*				findSharedRendererWindow( const RendererRef &searchRenderer );
-
 	WindowRef					createWindow( Window::Format format );
-	void						quit();
-
-	float						getFrameRate() const;
-	void						setFrameRate( float aFrameRate );
-	void						disableFrameRate();
-	bool						isFrameRateEnabled() const;
-
-
-	WindowRef					getWindow() const;
-	void						setWindow( WindowRef window );
-	size_t						getNumWindows() const;
-	WindowRef					getWindowIndex( size_t index ) const;
-	WindowRef					getForegroundWindow() const;
-	void						setForegroundWindow( WindowRef window );
-
-	void						hideCursor();
-	void						showCursor();
-	ivec2						getMousePos() const;
 
 private:
-	AppLinux					*mApp = nullptr;
-	WindowRef					mMainWindow;
-
-	std::list<WindowImplLinux*>	mWindows;
-	WindowRef					mActiveWindow;
-	WindowRef					mForegroundWindow;
-
-	float						mFrameRate;
-	bool						mFrameRateEnabled;
-	bool						mShouldQuit = false;
-
-	bool						mSetupHasBeenCalled = false;
-	bool						mQuitOnLastWindowClosed;
-
-	double						mNextFrameTime;
-
-	void						sleepUntilNextFrame();
+	AppLinux					*app() { return static_cast<AppLinux*>(getApp()); }
 	void						run();
 
 	void						registerWindowEvents( WindowImplLinux* window );
 	void						unregisterWindowEvents( WindowImplLinux* window );
 
-	friend class AppLinux;
 	friend class WindowImplLinux;
+    friend class AppImplLinux;
+    friend class AppImplLinuxGlfw;
 #if ! defined( CINDER_LINUX_EGL_ONLY )
 	friend class GlfwCallbacks;
+    friend class linux::GlfwCallbacks;
 #endif
 };
 
