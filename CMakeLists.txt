@@ -18,14 +18,23 @@ project( cinder )
 
 option( CINDER_BUILD_TESTS "Build unit tests." OFF )
 option( CINDER_BUILD_ALL_SAMPLES "Build all samples." OFF )
-set( CINDER_BUILD_SAMPLE "" CACHE STRING "Build a specific sample by specifying its path relative to the samples directory (ex. '_opengl/Cube')." )
+set( CINDER_BUILD_SAMPLE "" CACHE 
+    STRING "Build a specific sample by specifying its path relative to the samples directory (ex. '_opengl/Cube')." )
 
 set( CINDER_PATH      "${CMAKE_CURRENT_SOURCE_DIR}" )
 set( CINDER_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proj/cmake" )
+set( CINDER_SRC_DIR	  "${CINDER_PATH}/src" )
+set( CINDER_INC_DIR	  "${CINDER_PATH}/include" )
 
+# Configure all CINDER_<PLATFORM> variables.
 include( ${CINDER_CMAKE_DIR}/configure.cmake )
-include( ${CINDER_CMAKE_DIR}/libcinder_configure.cmake )
+
+# Create source file list.
 include( ${CINDER_CMAKE_DIR}/libcinder_source_files.cmake )
+
+add_library( cinder ${CINDER_SRC_FILES} )
+
+include( ${CINDER_CMAKE_DIR}/libcinder_configure.cmake )
 
 set( CINDER_SKIP_SAMPLES "" )
 

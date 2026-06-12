@@ -20,7 +20,7 @@ list( APPEND SRC_SET_CINDER_APP_ANDROID
 	${CINDER_SRC_DIR}/cinder/app/android/WindowImplAndroid.cpp
 )
 
-list( APPEND CINDER_SRC_FILES
+target_sources( cinder PRIVATE
 	${SRC_SET_CINDER_ANDROID}
 	${SRC_SET_CINDER_APP_ANDROID}
 )

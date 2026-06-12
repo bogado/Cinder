@@ -111,7 +111,7 @@ if( NOT CINDER_DISABLE_VIDEO )
 	find_library( COREMEDIA_FRAMEWORK CoreMedia REQUIRED )
 endif()
 
-list( APPEND CINDER_LIBS_DEPENDS
+target_link_libraries(cinder PUBLIC
 	${UIKIT_FRAMEWORK}
 	${OPENGLES_FRAMEWORK}
 	${AVFOUNDATION_FRAMEWORK}
@@ -129,9 +129,9 @@ list( APPEND CINDER_LIBS_DEPENDS
 )
 
 # Include paths for CocoaTouch headers
-list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE
+target_include_directories(cinder PRIVATE
 	${CINDER_INC_DIR}/cinder/app/cocoa
 )
 
 # GL ES defines
-list( APPEND CINDER_DEFINES "-DCINDER_GL_ES" "-DCINDER_GL_ES_3" )
+target_compile_options( cinder PRIVATE "-DCINDER_GL_ES" "-DCINDER_GL_ES_3" )

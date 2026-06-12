@@ -1,4 +1,14 @@
 if( NOT TARGET cinder${CINDER_LIB_SUFFIX} )
+    if(BUILD_SHARED_LIBS)
+        set( _LIB_TYPE SHARED )
+    else()
+        set( _LIB_TYPE STATIC )
+    endif()
+    
+    add_library( Cinder ${_LIB_TYPE} IMPORTED )
+
+    include(  "${PROJECT_BINARY_DIR}/${CINDER_LIB_DIRECTORY}/configure.cmake" )
+    include( "${PROJECT_BINARY_DIR}/${CINDER_LIB_DIRECTORY}/libcinder_configure.cmake" )
     include( "${PROJECT_BINARY_DIR}/${CINDER_LIB_DIRECTORY}/cinderTargets.cmake" )
 
     # Record the C++ standard and extensions setting Cinder was built with

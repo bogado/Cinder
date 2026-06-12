@@ -80,7 +80,7 @@ if( NOT CINDER_DISABLE_VIDEO )
 						${GST_ROOT}/lib/glib-2.0.lib
 						${GST_ROOT}/lib/gio-2.0.lib )
 
-			list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE
+			target_include_directories( cinder PRIVATE
 						${GST_ROOT}/include
 						${GST_ROOT}/include/gstreamer-1.0
 						${GST_ROOT}/include/glib-2.0
@@ -92,7 +92,7 @@ if( NOT CINDER_DISABLE_VIDEO )
 						${CINDER_SRC_DIR}/cinder/linux/GstPlayer.cpp
 						${CINDER_SRC_DIR}/cinder/linux/Movie.cpp )
 
-			list( APPEND CINDER_DEFINES CINDER_MSW_USE_GSTREAMER )
+			target_compile_options( cinder PRIVATE CINDER_MSW_USE_GSTREAMER )
 		else()
 			message( WARNING "Requested GStreamer video playback support for MSW but no suitable GStreamer installation found. Make sure that GStreamer is installed properly and GSTREAMER_1_0_ROOT_X86_64 is defined in your env variables. " )
 		endif()
@@ -116,7 +116,7 @@ if( NOT CINDER_DISABLE_VIDEO )
 	endif()
 endif()
 
-list( APPEND CINDER_SRC_FILES
+target_sources( cinder PRIVATE
 	${SRC_SET_MSW}
 	${SRC_SET_APP_MSW}
 	${SRC_SET_AUDIO_MSW}
@@ -129,7 +129,7 @@ source_group( "cinder\\audio\\msw"	FILES ${SRC_SET_AUDIO_MSW} )
 source_group( "cinder\\audio\\dsp"	FILES ${SRC_SET_CINDER_AUDIO_DSP} )
 source_group( "cinder\\video\\msw"	FILES ${SRC_SET_VIDEO_MSW} )
 
-list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE
+target_include_directories( cinder PRIVATE
 	${CINDER_INC_DIR}/msw/png
 	${CINDER_INC_DIR}/msw/zlib
 	${CINDER_INC_DIR}/msw
@@ -137,15 +137,15 @@ list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE
 
 # ANGLE includes
 if( CINDER_GL_ANGLE )
-	list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE ${CINDER_INC_DIR}/ANGLE )
+	target_include_directories( cinder PRIVATE ${CINDER_INC_DIR}/ANGLE )
 endif()
 
 # NOTE: UNICODE and _UNICODE forces generator to use Unicode instead of MultiByte
-list( APPEND CINDER_DEFINES "_LIB;UNICODE;_UNICODE;NOMINMAX;_WIN32_WINNT=0x0A00;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS" )
+target_compile_options( cinder PRIVATE "_LIB;UNICODE;_UNICODE;NOMINMAX;_WIN32_WINNT=0x0A00;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS" )
 
 # ANGLE define
 if( CINDER_GL_ANGLE )
-	list( APPEND CINDER_DEFINES "CINDER_GL_ANGLE" )
+	target_compile_options( cinder PRIVATE "CINDER_GL_ANGLE" )
 endif()
 
 if( MSVC )

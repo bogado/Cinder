@@ -38,7 +38,7 @@ endif()
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Define CINDER_GLFW preprocessor macro
-list( APPEND CINDER_DEFINES CINDER_GLFW )
+target_compile_options( cinder PRIVATE CINDER_GLFW )
 
 # Add GLFW app implementation sources
 list( APPEND SRC_SET_APP_GLFW
@@ -49,14 +49,14 @@ list( APPEND SRC_SET_APP_GLFW
 )
 
 # Add GLFW library sources (core + Cocoa backend)
-list( APPEND CINDER_SRC_FILES
+target_sources(cinder PRIVATE
 	${SRC_SET_APP_GLFW}
 	${SRC_SET_GLFW}
 	${SRC_SET_GLFW_COCOA}
 )
 
 # Add GLFW-specific compile definitions
-list( APPEND CINDER_DEFINES _GLFW_COCOA )
+target_compile_options( cinder PRIVATE _GLFW_COCOA )
 
 source_group( "cinder\\app\\glfw" FILES ${SRC_SET_APP_GLFW} )
 source_group( "thirdparty\\glfw" FILES ${SRC_SET_GLFW} ${SRC_SET_GLFW_COCOA} )
@@ -101,7 +101,7 @@ set_source_files_properties( ${CINDER_SOURCES_OBJCPP}
 	PROPERTIES COMPILE_FLAGS "-x objective-c++"
 )
 
-list( APPEND CINDER_SRC_FILES
+target_sources( cinder PRIVATE
 	${SRC_SET_COCOA}
 	${SRC_SET_AUDIO_COCOA}
 )
@@ -136,13 +136,13 @@ if( NOT CINDER_DISABLE_VIDEO )
 		list( APPEND CINDER_LIBS_DEPENDS ${GSTREAMER_FRAMEWORK} ${GSTREAMER_FRAMEWORK}/Versions/Current/lib/libgstgl-1.0.dylib )
 		list( APPEND CINDER_INCLUDE_SYSTEM_PRIVATE ${GSTREAMER_FRAMEWORK}/Headers ${CINDER_INC_DIR}/cinder/linux )
 		list( APPEND CINDER_SRC_FILES ${CINDER_SRC_DIR}/cinder/linux/GstPlayer.cpp ${CINDER_SRC_DIR}/cinder/linux/Movie.cpp )
-		list( APPEND CINDER_DEFINES CINDER_MAC_USE_GSTREAMER )
+		target_compile_options( cinder PRIVATE CINDER_MAC_USE_GSTREAMER )
 	else()
 		list( APPEND CINDER_SRC_FILES ${SRC_SET_QTIME} )
 	endif()
 endif()
 
-list( APPEND CINDER_LIBS_DEPENDS
+target_link_libraries(cinder PUBLIC
     ${COCOA_FRAMEWORK}
     ${OPENGL_FRAMEWORK}
     ${AUDIOTOOLBOX_FRAMEWORK}

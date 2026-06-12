@@ -1,5 +1,7 @@
 include( CMakeParseArguments )
 
+include( "${CINDER_PATH}/proj/cmake/configure.cmake")
+
 #
 # ci_require_platform( <platform> [<platform2> ...] )
 #
@@ -166,7 +168,6 @@ function( ci_make_app )
 	endif()
 
 	add_executable( ${ARG_APP_NAME} MACOSX_BUNDLE WIN32 ${ARG_SOURCES} ${ICON_PATH} ${ARG_RESOURCES} )
-
 	target_include_directories( ${ARG_APP_NAME} PUBLIC ${ARG_INCLUDES} )
 	target_link_libraries( ${ARG_APP_NAME} PUBLIC cinder ${ARG_LIBRARIES} )
 

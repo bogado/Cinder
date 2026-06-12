@@ -12,6 +12,13 @@ option( CINDER_GL_ANGLE "Build with ANGLE instead of native OpenGL (Windows only
 
 include( ${CMAKE_CURRENT_LIST_DIR}/utilities.cmake )
 
+# enable/disable IMGUI
+if( CINDER_DISABLE_IMGUI )
+	set( CINDER_IMGUI_ENABLED FALSE )
+else()
+	set( CINDER_IMGUI_ENABLED TRUE )
+endif()
+
 # Set default build type to Debug
 if( NOT CMAKE_BUILD_TYPE )
 	ci_log_v( "CMAKE_BUILD_TYPE not specified, defaulting to Debug" )
@@ -112,7 +119,10 @@ if( CINDER_HEADLESS_GL )
 			set( CINDER_HEADLESS True )
 			set( CINDER_HEADLESS_GL_OSMESA True )
 		else()
-			message( FATAL_ERROR "Unsupported headless GL rendering option: " ${CINDER_HEADLESS_GL_LOWER} " Available options include: egl, ..." )
+			message( FATAL_ERROR
+                "Unsupported headless GL rendering option: "
+                "${CINDER_HEADLESS_GL_LOWER} Available options include: egl, ..."
+            )
 		endif()
 	else()
 		message( FATAL_ERROR "Cinder headless GL rendering support is only available on Linux." )
@@ -123,7 +133,8 @@ endif()
 if( CINDER_LINUX )
 	# Find architecture name.
 	execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE CINDER_ARCH )
-	# CINDER_TARGET_GL is added to CINDER_TARGET_SUBFOLDER on Linux since we can have various builds depending on the target GL.
+	# CINDER_TARGET_GL is added to CINDER_TARGET_SUBFOLDER on Linux since we can have various builds
+    # depending on the target GL.
 	# e.g on the TK1 we can build both core profile and es2 so this takes care of putting everything on the right place.
 	set( CINDER_TARGET_SUBFOLDER "linux/${CINDER_ARCH}/${CINDER_TARGET_GL}" )
 elseif( CINDER_MAC )
@@ -148,4 +159,4 @@ endif()
 
 # CINDER_LIB_DIRECTORY is the platform-specific, relative path that will be used to define
 # CMAKE_ARCHIVE_OUTPUT_DIRECTORY for libcinder and also specifies where user apps will locate the cinder package
-set( CINDER_LIB_DIRECTORY "lib/${CINDER_TARGET_SUBFOLDER}/${CMAKE_BUILD_TYPE}" )
+set( CINDER_LIB_DIRECTORY "lib/${CINDER_TARGET_SUBFOLDER}" )
