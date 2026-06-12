@@ -41,6 +41,9 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# This allows using "return(PROPAGATE ...)"
+cmake_policy(SET CMP0140 NEW)
+
 find_package(PkgConfig)
 pkg_check_modules(PC_GLIB QUIET glib-2.0)
 
@@ -67,7 +70,11 @@ find_path(GLIB_INCLUDE_DIR
     PATH_SUFFIXES glib-2.0
 )
 
-set(GLIB_INCLUDE_DIRS ${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR})
+add_library( Glib::glib SHARED IMPORTED GLOBAL )
+set_target_properties( Glib::glib PROPERTIES IMPORTED_LOCATION ${GLIB_LIBRARIES} )
+target_include_directories( Glib::glib INTERFACE ${GLIB_INCLUDE_DIRS} )
+
+set( GLIB_INCLUDE_DIRS ${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR} )
 
 # Version detection
 file(READ "${GLIBCONFIG_INCLUDE_DIR}/glibconfig.h" GLIBCONFIG_H_CONTENTS)
@@ -79,22 +86,51 @@ string(REGEX MATCH "#define GLIB_MICRO_VERSION ([0-9]+)" _dummy "${GLIBCONFIG_H_
 set(GLIB_VERSION_MICRO "${CMAKE_MATCH_1}")
 set(GLIB_VERSION "${GLIB_VERSION_MAJOR}.${GLIB_VERSION_MINOR}.${GLIB_VERSION_MICRO}")
 
+function(find_and_export varname)
+    set( oneValueArgs TARGET)
+    set( multiValueArgs NAMES HINTS INCLUDES)
+
+    cmake_parse_arguments( ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+        
+
+        set(_TARGET Glib::${ARG_TARGET})
+        find_library( ${varname} NAMES ${ARG_NAMES} HINTS ${ARG_HINTS} )
+        list( APPEND ADDITIONAL_REQUIRED_VARS ${varname} )
+        add_library( ${_TARGET} SHARED IMPORTED GLOBAL )
+        set_target_properties( ${_TARGET} PROPERTIES IMPORTED_LOCATION ${${varname}} )
+        target_include_directories( ${_TARGET} INTERFACE ${ARG_INCLUDES} )
+
+    return( PROPAGATE ADDITIONAL_REQUIRED_VARS ${varname} )
+endfunction()
+
 # Additional Glib components.  We only look for libraries, as not all of them
 # have corresponding headers and all headers are installed alongside the main
 # glib ones.
 foreach (_component ${Glib_FIND_COMPONENTS})
     if (${_component} STREQUAL "gio")
-        find_library(GLIB_GIO_LIBRARIES NAMES gio-2.0 HINTS ${_GLIB_LIBRARY_DIR})
-        set(ADDITIONAL_REQUIRED_VARS ${ADDITIONAL_REQUIRED_VARS} GLIB_GIO_LIBRARIES)
+        find_and_export(GLIB_GIO_LIBRARIES
+            TARGET gio
+            NAMES gio-2.0 
+            HINTS ${_GLIB_LIBRARY_DIR}
+            INCLUDES ${GLIB_INCLUDE_DIRS})
     elseif (${_component} STREQUAL "gobject")
-        find_library(GLIB_GOBJECT_LIBRARIES NAMES gobject-2.0 HINTS ${_GLIB_LIBRARY_DIR})
-        set(ADDITIONAL_REQUIRED_VARS ${ADDITIONAL_REQUIRED_VARS} GLIB_GOBJECT_LIBRARIES)
+        find_and_export(GLIB_GOBJECT_LIBRARIES
+            NAMES gobject-2.0
+            TARGET gobject
+            HINTS ${_GLIB_LIBRARY_DIR}
+            INCLUDES ${GLIB_INCLUDE_DIRS})
     elseif (${_component} STREQUAL "gmodule")
-        find_library(GLIB_GMODULE_LIBRARIES NAMES gmodule-2.0 HINTS ${_GLIB_LIBRARY_DIR})
-        set(ADDITIONAL_REQUIRED_VARS ${ADDITIONAL_REQUIRED_VARS} GLIB_GMODULE_LIBRARIES)
+        find_and_export(GLIB_GMODULE_LIBRARIES
+            TARGET gmodule
+            NAMES gmodule-2.0
+            HINTS ${_GLIB_LIBRARY_DIR}
+            INCLUDES ${GLIB_INCLUDE_DIRS})
     elseif (${_component} STREQUAL "gthread")
-        find_library(GLIB_GTHREAD_LIBRARIES NAMES gthread-2.0 HINTS ${_GLIB_LIBRARY_DIR})
-        set(ADDITIONAL_REQUIRED_VARS ${ADDITIONAL_REQUIRED_VARS} GLIB_GTHREAD_LIBRARIES)
+        find_and_export(GLIB_GTHREAD_LIBRARIES
+            TARGET gthread
+            NAMES gthread-2.0
+            HINTS ${_GLIB_LIBRARY_DIR}
+            INCLUDES ${GLIB_INCLUDE_DIRS})
     elseif (${_component} STREQUAL "gio-unix")
         # gio-unix is compiled as part of the gio library, but the include paths
         # are separate from the shared glib ones. Since this is currently only used
@@ -104,8 +140,7 @@ foreach (_component ${Glib_FIND_COMPONENTS})
 endforeach ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLIB REQUIRED_VARS GLIB_INCLUDE_DIRS GLIB_LIBRARIES ${ADDITIONAL_REQUIRED_VARS}
-                                       VERSION_VAR   GLIB_VERSION)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Glib REQUIRED_VARS GLIB_INCLUDE_DIRS GLIB_LIBRARIES ${ADDITIONAL_REQUIRED_VARS})
 
 mark_as_advanced(
     GLIBCONFIG_INCLUDE_DIR
@@ -118,4 +153,3 @@ mark_as_advanced(
     GLIB_INCLUDE_DIRS
     GLIB_LIBRARIES
 )
-

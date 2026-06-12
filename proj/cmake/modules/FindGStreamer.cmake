@@ -94,13 +94,27 @@ FIND_GSTREAMER_COMPONENT(GSTREAMER_VIDEO	gstreamer-video-1.0 gstvideo-1.0)
 # ------------------------------------------------
 # 3. Process the COMPONENTS passed to FIND_PACKAGE
 # ------------------------------------------------
-set(_GSTREAMER_REQUIRED_VARS GSTREAMER_INCLUDE_DIRS GSTREAMER_LIBRARIES GSTREAMER_VERSION GSTREAMER_BASE_INCLUDE_DIRS GSTREAMER_BASE_LIBRARIES)
+set(_GSTREAMER_REQUIRED_VARS
+    GSTREAMER_INCLUDE_DIRS
+    GSTREAMER_LIBRARIES
+    GSTREAMER_VERSION
+    GSTREAMER_BASE_INCLUDE_DIRS
+    GSTREAMER_BASE_LIBRARIES
+)
+
+add_library(GStreamer::gstreamer SHARED IMPORTED GLOBAL)
+target_include_directories(GStreamer::gstreamer INTERFACE ${GSTREAMER_INCLUDE_DIRS})
+set_target_properties(GStreamer::gstreamer PROPERTIES IMPORTED_LOCATION ${GSTREAMER_LIBRARIES})
 
 foreach (_component ${GStreamer_FIND_COMPONENTS})
     set(_gst_component "GSTREAMER_${_component}")
     string(TOUPPER ${_gst_component} _UPPER_NAME)
 
     list(APPEND _GSTREAMER_REQUIRED_VARS ${_UPPER_NAME}_INCLUDE_DIRS ${_UPPER_NAME}_LIBRARIES)
+    add_library(GStreamer::${_component} SHARED IMPORTED GLOBAL)
+    set_target_properties( GStreamer::${_component} PROPERTIES
+        IMPORTED_LOCATION "${${_UPPER_NAME}_LIBRARIES}")
+    target_include_directories(  GStreamer::${_component} INTERFACE ${${_UPPER_NAME}_INCLUDE_DIRS})
 endforeach ()
 
 include(FindPackageHandleStandardArgs)

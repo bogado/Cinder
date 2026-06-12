@@ -21,15 +21,22 @@ mark_as_advanced( SNDFILE_INCLUDE_DIR SNDFILE_LIBRARY )
 if( SNDFILE_LIBRARY AND EXISTS "${SNDFILE_LIBRARY}" )
 	get_filename_component( SNDFILE_SO_PATH "${SNDFILE_LIBRARY}" REALPATH )
 
-    string( REGEX REPLACE "^.*/libsndfile\\.so\\.([0-9]+).*$" "\\1" SNDFILE_VERSION_MAJOR "${SNDFILE_SO_PATH}" )
-    string( REGEX REPLACE "^.*/libsndfile\\.so\\.[0-9]+\\.([0-9]+).*$" "\\1" SNDFILE_VERSION_MINOR  "${SNDFILE_SO_PATH}" )
-    string( REGEX REPLACE "^.*/libsndfile\\.so\\.[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1" SNDFILE_VERSION_PATCH "${SNDFILE_SO_PATH}" )
+    string( REGEX REPLACE "^.*/libsndfile\\.so\\.([0-9]+).*$" "\\1"
+        SNDFILE_VERSION_MAJOR "${SNDFILE_SO_PATH}" )
+    string( REGEX REPLACE "^.*/libsndfile\\.so\\.[0-9]+\\.([0-9]+).*$" "\\1"
+        SNDFILE_VERSION_MINOR  "${SNDFILE_SO_PATH}" )
+    string( REGEX REPLACE "^.*/libsndfile\\.so\\.[0-9]+\\.[0-9]+\\.([0-9]+).*$" "\\1"
+        SNDFILE_VERSION_PATCH "${SNDFILE_SO_PATH}" )
     set( SNDFILE_VERSION_STRING "${SNDFILE_VERSION_MAJOR}.${SNDFILE_VERSION_MINOR}.${SNDFILE_VERSION_PATCH}" )
 
     set( SNDFILE_MAJOR_VERSION "${SNDFILE_VERSION_MAJOR}" )
     set( SNDFILE_MINOR_VERSION "${SNDFILE_VERSION_MINOR}" )
     set( SNDFILE_PATCH_VERSION "${SNDFILE_VERSION_PATCH}" )
 endif()
+
+add_library(SNDFILE::sndfile SHARED IMPORTED GLOBAL)
+target_include_directories( SNDFILE::sndfile INTERFACE ${SNDFILE_INCLUDE_DIRS})
+set_target_properties(SNDFILE::sndfile PROPERTIES IMPORTED_LOCATION ${SNDFILE_LIBRARY})
 
 include( FindPackageHandleStandardArgs )
 find_package_handle_standard_args( 

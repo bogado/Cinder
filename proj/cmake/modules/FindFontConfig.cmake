@@ -62,10 +62,18 @@ else (FONTCONFIG_LIBRARIES AND FONTCONFIG_INCLUDE_DIR)
     )
 
     include(FindPackageHandleStandardArgs)
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(Fontconfig DEFAULT_MSG FONTCONFIG_LIBRARIES FONTCONFIG_INCLUDE_DIR)
-
-    mark_as_advanced(FONTCONFIG_LIBRARIES FONTCONFIG_INCLUDE_DIR)
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(FontConfig DEFAULT_MSG FONTCONFIG_LIBRARIES FONTCONFIG_INCLUDE_DIR)
 
 endif (FONTCONFIG_LIBRARIES AND FONTCONFIG_INCLUDE_DIR)
 
+if(NOT TARGET FontConfig::fontconfig)
+    add_library( FontConfig::fontconfig SHARED IMPORTED )
+    target_include_directories( FontConfig::fontconfig INTERFACE "${FONTCONFIG_INCLUDE_DIRS}")
+    target_compile_options( FontConfig::fontconfig INTERFACE "${FONTCONFIG_DEFINITIONS}")
+    set_target_properties( FontConfig::fontconfig PROPERTIES 
+        IMPORTED_LOCATION "${FONTCONFIG_LIBRARIES}"
+    )
+endif()
+
+mark_as_advanced(FONTCONFIG_LIBRARIES FONTCONFIG_INCLUDE_DIR)
 

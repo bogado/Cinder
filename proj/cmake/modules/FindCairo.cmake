@@ -35,4 +35,10 @@ else()
   endif()
 endif()
 
-mark_as_advanced(CAIRO_CFLAGS CAIRO_INCLUDE_DIRS CAIRO_LIBRARIES)
+if( NOT TARGET Cairo::cairo )
+    add_library(Cairo::cairo SHARED IMPORTED GLOBAL)
+    target_link_libraries(Cairo::cairo INTERFACE "${CAIRO_INCLUDE_DIR}")
+    set_target_properties( Cairo::cairo PROPERTIES 
+        IMPORTED_LOCATION "${CAIRO_LIBRARY}"
+    )
+endif()
